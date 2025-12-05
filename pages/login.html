@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Iniciar sesión en CaribeSupply">
+    <title>Iniciar Sesión | CaribeSupply S.A.S.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-2xl); background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 50%, var(--bg-tertiary) 100%); }
+        .auth-container { width: 100%; max-width: 440px; }
+        .auth-card { background: var(--bg-primary); padding: var(--space-2xl); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); }
+        .auth-header { text-align: center; margin-bottom: var(--space-2xl); }
+        .auth-logo { display: inline-flex; align-items: center; gap: var(--space-sm); font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; color: var(--color-primary); text-decoration: none; margin-bottom: var(--space-lg); }
+        .auth-logo .logo-icon { font-size: 2rem; }
+        .auth-title { font-size: var(--text-2xl); margin-bottom: var(--space-sm); }
+        .auth-subtitle { color: var(--text-secondary); }
+        .auth-form .form-group { margin-bottom: var(--space-lg); }
+        .auth-form .form-label { display: block; font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-sm); }
+        .auth-form .form-input { width: 100%; padding: var(--space-md); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); font-size: var(--text-base); transition: all var(--transition-fast); }
+        .auth-form .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(26, 95, 60, 0.1); }
+        .auth-form .form-input.error { border-color: var(--color-error); }
+        .auth-form .form-error { display: none; color: var(--color-error); font-size: var(--text-sm); margin-top: var(--space-xs); }
+        .auth-form .form-group.has-error .form-error { display: block; }
+        .auth-form .btn { width: 100%; margin-top: var(--space-md); }
+        .auth-divider { display: flex; align-items: center; gap: var(--space-md); margin: var(--space-xl) 0; color: var(--text-muted); font-size: var(--text-sm); }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--bg-tertiary); }
+        .auth-footer { text-align: center; font-size: var(--text-sm); color: var(--text-secondary); }
+        .auth-footer a { color: var(--color-primary); font-weight: 600; }
+        .password-toggle { position: relative; }
+        .password-toggle button { position: absolute; right: var(--space-md); top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: var(--space-xs); }
+        .password-toggle input { padding-right: 44px; }
+    </style>
+</head>
+<body>
+    <main class="auth-page" id="main-content">
+        <div class="auth-container">
+            <div class="auth-card">
+                <header class="auth-header">
+                    <a href="../index.html" class="auth-logo">
+                        <span class="logo-icon">🌴</span>
+                        <span>CaribeSupply</span>
+                    </a>
+                    <h1 class="auth-title">Bienvenido de vuelta</h1>
+                    <p class="auth-subtitle">Ingresa tus credenciales para continuar</p>
+                </header>
+
+                <form class="auth-form" id="login-form" novalidate>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Correo electrónico</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="tu@email.com" required autocomplete="email" aria-describedby="email-error">
+                        <span class="form-error" id="email-error" role="alert"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Contraseña</label>
+                        <div class="password-toggle">
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Tu contraseña" required autocomplete="current-password" aria-describedby="password-error">
+                            <button type="button" onclick="togglePassword('password')" aria-label="Mostrar contraseña">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <span class="form-error" id="password-error" role="alert"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">Iniciar Sesión</button>
+                </form>
+
+                <div class="auth-divider">o</div>
+
+                <p class="auth-footer">
+                    ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Redirigir si ya está logueado
+        document.addEventListener('DOMContentLoaded', () => {
+            if (Auth.getCurrentUser()) {
+                window.location.href = '../index.html';
+            }
+        });
+    </script>
+</body>
+</html>

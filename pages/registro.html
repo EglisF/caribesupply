@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crear cuenta en CaribeSupply">
+    <title>Registrarse | CaribeSupply S.A.S.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-2xl); background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 50%, var(--bg-tertiary) 100%); }
+        .auth-container { width: 100%; max-width: 500px; }
+        .auth-card { background: var(--bg-primary); padding: var(--space-2xl); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); }
+        .auth-header { text-align: center; margin-bottom: var(--space-2xl); }
+        .auth-logo { display: inline-flex; align-items: center; gap: var(--space-sm); font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; color: var(--color-primary); text-decoration: none; margin-bottom: var(--space-lg); }
+        .auth-logo .logo-icon { font-size: 2rem; }
+        .auth-title { font-size: var(--text-2xl); margin-bottom: var(--space-sm); }
+        .auth-subtitle { color: var(--text-secondary); }
+        .auth-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+        @media (max-width: 500px) { .auth-form .form-row { grid-template-columns: 1fr; } }
+        .auth-form .form-group { margin-bottom: var(--space-lg); }
+        .auth-form .form-label { display: block; font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-sm); }
+        .auth-form .form-input, .auth-form .form-select { width: 100%; padding: var(--space-md); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); font-size: var(--text-base); font-family: var(--font-body); transition: all var(--transition-fast); background: var(--bg-primary); }
+        .auth-form .form-input:focus, .auth-form .form-select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(26, 95, 60, 0.1); }
+        .auth-form .form-input.error, .auth-form .form-select.error { border-color: var(--color-error); }
+        .auth-form .form-error { display: none; color: var(--color-error); font-size: var(--text-sm); margin-top: var(--space-xs); }
+        .auth-form .form-group.has-error .form-error { display: block; }
+        .auth-form .form-hint { font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-xs); }
+        .auth-form .btn { width: 100%; margin-top: var(--space-md); }
+        .auth-divider { display: flex; align-items: center; gap: var(--space-md); margin: var(--space-xl) 0; color: var(--text-muted); font-size: var(--text-sm); }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--bg-tertiary); }
+        .auth-footer { text-align: center; font-size: var(--text-sm); color: var(--text-secondary); }
+        .auth-footer a { color: var(--color-primary); font-weight: 600; }
+        .password-toggle { position: relative; }
+        .password-toggle button { position: absolute; right: var(--space-md); top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; }
+        .password-toggle input { padding-right: 44px; }
+        .password-strength { height: 4px; border-radius: 2px; margin-top: var(--space-sm); background: var(--bg-tertiary); overflow: hidden; }
+        .password-strength-bar { height: 100%; transition: all var(--transition-base); width: 0; }
+        .password-strength-bar.weak { width: 33%; background: var(--color-error); }
+        .password-strength-bar.medium { width: 66%; background: var(--color-warning); }
+        .password-strength-bar.strong { width: 100%; background: var(--color-success); }
+    </style>
+</head>
+<body>
+    <main class="auth-page" id="main-content">
+        <div class="auth-container">
+            <div class="auth-card">
+                <header class="auth-header">
+                    <a href="../index.html" class="auth-logo">
+                        <span class="logo-icon">🌴</span>
+                        <span>CaribeSupply</span>
+                    </a>
+                    <h1 class="auth-title">Crear cuenta</h1>
+                    <p class="auth-subtitle">Únete a nuestra comunidad de artesanías</p>
+                </header>
+
+                <form class="auth-form" id="register-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="nombre">Nombre *</label>
+                            <input type="text" id="nombre" name="nombre" class="form-input" placeholder="Tu nombre" required minlength="2" autocomplete="given-name">
+                            <span class="form-error" role="alert"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="apellido">Apellido *</label>
+                            <input type="text" id="apellido" name="apellido" class="form-input" placeholder="Tu apellido" required minlength="2" autocomplete="family-name">
+                            <span class="form-error" role="alert"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Correo electrónico *</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="tu@email.com" required autocomplete="email">
+                        <span class="form-error" role="alert"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="telefono">Teléfono *</label>
+                        <input type="tel" id="telefono" name="telefono" class="form-input" placeholder="809-555-1234" required autocomplete="tel">
+                        <span class="form-hint">Formato: 809-XXX-XXXX</span>
+                        <span class="form-error" role="alert"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="provincia">Provincia *</label>
+                        <select id="provincia" name="provincia" class="form-select" required>
+                            <option value="">Selecciona tu provincia</option>
+                        </select>
+                        <span class="form-error" role="alert"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Contraseña *</label>
+                        <div class="password-toggle">
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Crea una contraseña" required minlength="8" autocomplete="new-password">
+                            <button type="button" onclick="togglePassword('password')" aria-label="Mostrar contraseña">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <div class="password-strength"><div class="password-strength-bar" id="password-strength"></div></div>
+                        <span class="form-hint">Mínimo 8 caracteres, una mayúscula, una minúscula y un número</span>
+                        <span class="form-error" role="alert"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-password">Confirmar contraseña *</label>
+                        <div class="password-toggle">
+                            <input type="password" id="confirm-password" name="confirmPassword" class="form-input" placeholder="Repite tu contraseña" required autocomplete="new-password">
+                            <button type="button" onclick="togglePassword('confirm-password')" aria-label="Mostrar contraseña">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <span class="form-error" role="alert"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg">Crear Cuenta</button>
+                </form>
+
+                <div class="auth-divider">o</div>
+
+                <p class="auth-footer">
+                    ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // Poblar provincias
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById('provincia');
+            PROVINCIAS.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = p.name;
+                select.appendChild(option);
+            });
+
+            // Password strength indicator
+            document.getElementById('password').addEventListener('input', (e) => {
+                const password = e.target.value;
+                const bar = document.getElementById('password-strength');
+                bar.className = 'password-strength-bar';
+                
+                if (password.length < 6) {
+                    bar.classList.add('weak');
+                } else if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password)) {
+                    bar.classList.add('medium');
+                } else {
+                    bar.classList.add('strong');
+                }
+            });
+
+            // Redirigir si ya está logueado
+            if (Auth.getCurrentUser()) {
+                window.location.href = '../index.html';
+            }
+        });
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Centro de ayuda y preguntas frecuentes - CaribeSupply">
+    <title>Soporte | CaribeSupply S.A.S.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .support-page { padding: var(--space-2xl) 0 var(--space-4xl); }
+        .support-search { max-width: 600px; margin: 0 auto var(--space-3xl); }
+        .search-wrapper { position: relative; }
+        .search-wrapper input { width: 100%; padding: var(--space-lg) var(--space-lg) var(--space-lg) 50px; font-size: var(--text-lg); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-xl); }
+        .search-wrapper input:focus { outline: none; border-color: var(--color-primary); }
+        .search-wrapper svg { position: absolute; left: var(--space-lg); top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .categories-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-sm); margin-bottom: var(--space-3xl); }
+        .category-btn { padding: var(--space-sm) var(--space-lg); background: var(--bg-primary); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-full); cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-body); font-size: var(--text-sm); display: flex; align-items: center; gap: var(--space-sm); }
+        .category-btn:hover { border-color: var(--color-primary); }
+        .category-btn.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+        .faq-list { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--bg-primary); border-radius: var(--radius-lg); margin-bottom: var(--space-md); box-shadow: var(--shadow-sm); overflow: hidden; }
+        .faq-question { width: 100%; padding: var(--space-lg) var(--space-xl); background: none; border: none; text-align: left; font-family: var(--font-body); font-size: var(--text-base); font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-md); transition: all var(--transition-fast); }
+        .faq-question:hover { background: var(--bg-secondary); }
+        .faq-question .icon { transition: transform var(--transition-fast); flex-shrink: 0; }
+        .faq-item.open .faq-question .icon { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height var(--transition-base); }
+        .faq-item.open .faq-answer { max-height: 500px; }
+        .faq-answer-content { padding: 0 var(--space-xl) var(--space-xl); color: var(--text-secondary); line-height: 1.7; }
+        .contact-section { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); border-radius: var(--radius-xl); padding: var(--space-3xl); color: white; text-align: center; margin-top: var(--space-4xl); max-width: 800px; margin-left: auto; margin-right: auto; }
+        .contact-section h2 { margin-bottom: var(--space-md); }
+        .contact-section p { opacity: 0.9; margin-bottom: var(--space-xl); }
+        .contact-options { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-xl); }
+        .contact-option { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+        .contact-option .icon { font-size: 2rem; }
+        .contact-option .label { font-size: var(--text-sm); opacity: 0.8; }
+        .contact-option .value { font-weight: 600; }
+        .no-results { text-align: center; padding: var(--space-3xl); }
+        .no-results .icon { font-size: 4rem; margin-bottom: var(--space-lg); opacity: 0.5; }
+        .chatbot-btn { position: fixed; bottom: var(--space-xl); right: var(--space-xl); width: 60px; height: 60px; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-full); cursor: pointer; box-shadow: var(--shadow-xl); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl); transition: all var(--transition-fast); z-index: 100; }
+        .chatbot-btn:hover { transform: scale(1.1); background: var(--color-primary-dark); }
+        .chatbot-window { position: fixed; bottom: 100px; right: var(--space-xl); width: 380px; max-width: calc(100vw - 40px); background: var(--bg-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); display: none; flex-direction: column; overflow: hidden; z-index: 100; }
+        .chatbot-window.active { display: flex; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chatbot-header { background: var(--color-primary); color: white; padding: var(--space-lg); display: flex; justify-content: space-between; align-items: center; }
+        .chatbot-header h3 { font-size: var(--text-base); margin: 0; display: flex; align-items: center; gap: var(--space-sm); }
+        .chatbot-close { background: none; border: none; color: white; cursor: pointer; font-size: var(--text-xl); }
+        .chatbot-messages { flex: 1; padding: var(--space-lg); max-height: 350px; overflow-y: auto; }
+        .chat-message { margin-bottom: var(--space-md); max-width: 85%; }
+        .chat-message.bot { margin-right: auto; }
+        .chat-message.user { margin-left: auto; }
+        .chat-bubble { padding: var(--space-md); border-radius: var(--radius-lg); font-size: var(--text-sm); line-height: 1.5; }
+        .chat-message.bot .chat-bubble { background: var(--bg-secondary); border-bottom-left-radius: 4px; }
+        .chat-message.user .chat-bubble { background: var(--color-primary); color: white; border-bottom-right-radius: 4px; }
+        .chatbot-input { display: flex; gap: var(--space-sm); padding: var(--space-md); border-top: 1px solid var(--bg-tertiary); }
+        .chatbot-input input { flex: 1; padding: var(--space-sm) var(--space-md); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-md); font-size: var(--text-sm); }
+        .chatbot-input input:focus { outline: none; border-color: var(--color-primary); }
+        .chatbot-input button { padding: var(--space-sm) var(--space-md); background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; }
+        .api-info { background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg); margin-top: var(--space-2xl); font-size: var(--text-sm); color: var(--text-secondary); max-width: 800px; margin-left: auto; margin-right: auto; }
+        .api-info code { background: var(--bg-tertiary); padding: 2px 6px; border-radius: var(--radius-sm); font-family: monospace; }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <header class="header">
+        <nav class="nav">
+            <a href="../index.html" class="logo"><span class="logo-icon">🌴</span><span class="logo-text">CaribeSupply</span></a>
+            <button class="nav-toggle" aria-expanded="false"><span class="hamburger"></span></button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                <li><a href="catalogo.html" class="nav-link">Catálogo</a></li>
+                <li><a href="clima.html" class="nav-link">Clima</a></li>
+                <li><a href="tasas.html" class="nav-link">Tasas de Cambio</a></li>
+                <li><a href="seguimiento.html" class="nav-link">Seguimiento</a></li>
+                <li><a href="soporte.html" class="nav-link active">Soporte</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="carrito.html" class="cart-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="m1 1 4 4h16l-2 10H7L5 5"/></svg><span class="cart-count" id="cart-count">0</span></a>
+                <a href="login.html" class="login-btn" id="auth-btn">Iniciar Sesión</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="page-header">
+            <div class="container">
+                <nav class="breadcrumb"><a href="../index.html">Inicio</a><span>/</span><span>Soporte</span></nav>
+                <h1 class="page-title">💬 Centro de Soporte</h1>
+                <p class="page-subtitle">Encuentra respuestas rápidas o contáctanos directamente</p>
+            </div>
+        </section>
+
+        <section class="support-page">
+            <div class="container">
+                <div class="support-search">
+                    <div class="search-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <input type="search" id="faq-search" placeholder="¿En qué podemos ayudarte?" aria-label="Buscar en preguntas frecuentes">
+                    </div>
+                </div>
+
+                <nav class="categories-nav" id="categories-nav" aria-label="Categorías de ayuda"></nav>
+
+                <div class="faq-list" id="faq-list"></div>
+
+                <div class="contact-section">
+                    <h2>¿No encontraste lo que buscabas?</h2>
+                    <p>Nuestro equipo está listo para ayudarte</p>
+                    <div class="contact-options">
+                        <div class="contact-option">
+                            <span class="icon">📧</span>
+                            <span class="label">Email</span>
+                            <span class="value">soporte@caribesupply.do</span>
+                        </div>
+                        <div class="contact-option">
+                            <span class="icon">📞</span>
+                            <span class="label">Teléfono</span>
+                            <span class="value">809-555-CARE</span>
+                        </div>
+                        <div class="contact-option">
+                            <span class="icon">💬</span>
+                            <span class="label">WhatsApp</span>
+                            <span class="value">809-555-2273</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="api-info">
+                    <strong>🔌 API Simulada:</strong> Sistema de FAQ y Chatbot<br>
+                    <code>GET /api/faq?category={category}&search={query}</code><br>
+                    El chatbot utiliza respuestas predefinidas basadas en palabras clave. En producción se integraría con servicios de NLP.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chatbot -->
+    <button class="chatbot-btn" id="chatbot-toggle" aria-label="Abrir chat de soporte">💬</button>
+    
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">
+            <h3>🤖 Asistente Virtual</h3>
+            <button class="chatbot-close" onclick="toggleChatbot()" aria-label="Cerrar chat">×</button>
+        </div>
+        <div class="chatbot-messages" id="chat-messages">
+            <div class="chat-message bot">
+                <div class="chat-bubble">¡Hola! 👋 Soy el asistente virtual de CaribeSupply. ¿En qué puedo ayudarte hoy?</div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." onkeypress="if(event.key==='Enter')sendMessage()">
+            <button onclick="sendMessage()" aria-label="Enviar mensaje">➤</button>
+        </div>
+    </div>
+
+    <footer class="footer"><div class="container"><div class="footer-bottom"><p class="copyright">© 2024 CaribeSupply S.A.S.</p></div></div></footer>
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        let selectedCategory = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            renderFAQs();
+            setupSearch();
+        });
+
+        function renderCategories() {
+            const nav = document.getElementById('categories-nav');
+            nav.innerHTML = `
+                <button class="category-btn active" onclick="filterByCategory('all')">
+                    <span>📚</span> Todas
+                </button>
+                ${FAQ_CATEGORIES.map(cat => `
+                    <button class="category-btn" onclick="filterByCategory('${cat.id}')">
+                        <span>${cat.icon}</span> ${cat.name}
+                    </button>
+                `).join('')}
+            `;
+        }
+
+        function filterByCategory(category) {
+            selectedCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.category-btn').classList.add('active');
+            renderFAQs();
+        }
+
+        function renderFAQs(searchTerm = '') {
+            const list = document.getElementById('faq-list');
+            let faqs = [...FAQS];
+
+            // Filtrar por categoría
+            if (selectedCategory !== 'all') {
+                faqs = faqs.filter(f => f.category === selectedCategory);
+            }
+
+            // Filtrar por búsqueda
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                faqs = faqs.filter(f => 
+                    f.question.toLowerCase().includes(term) || 
+                    f.answer.toLowerCase().includes(term)
+                );
+            }
+
+            if (faqs.length === 0) {
+                list.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">🔍</div>
+                        <h3>No encontramos resultados</h3>
+                        <p style="color: var(--text-secondary);">Intenta con otros términos o contacta a nuestro equipo</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = faqs.map(faq => `
+                <div class="faq-item" id="faq-${faq.id}">
+                    <button class="faq-question" onclick="toggleFAQ(${faq.id})" aria-expanded="false">
+                        <span>${faq.question}</span>
+                        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">${faq.answer}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleFAQ(id) {
+            const item = document.getElementById(`faq-${id}`);
+            const btn = item.querySelector('.faq-question');
+            const isOpen = item.classList.contains('open');
+            
+            // Cerrar otros
+            document.querySelectorAll('.faq-item.open').forEach(i => {
+                i.classList.remove('open');
+                i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            });
+            
+            if (!isOpen) {
+                item.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        function setupSearch() {
+            const input = document.getElementById('faq-search');
+            input.addEventListener('input', (e) => {
+                renderFAQs(e.target.value);
+            });
+        }
+
+        // Chatbot
+        function toggleChatbot() {
+            const window = document.getElementById('chatbot-window');
+            window.classList.toggle('active');
+            if (window.classList.contains('active')) {
+                document.getElementById('chat-input').focus();
+            }
+        }
+
+        document.getElementById('chatbot-toggle').onclick = toggleChatbot;
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messages = document.getElementById('chat-messages');
+            
+            // Mensaje del usuario
+            messages.innerHTML += `
+                <div class="chat-message user">
+                    <div class="chat-bubble">${escapeHtml(message)}</div>
+                </div>
+            `;
+            
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            // Respuesta del bot (simulada)
+            setTimeout(() => {
+                const response = getBotResponse(message);
+                messages.innerHTML += `
+                    <div class="chat-message bot">
+                        <div class="chat-bubble">${response}</div>
+                    </div>
+                `;
+                messages.scrollTop = messages.scrollHeight;
+            }, 800);
+        }
+
+        function getBotResponse(message) {
+            const msg = message.toLowerCase();
+            
+            if (msg.includes('envío') || msg.includes('envio') || msg.includes('entrega')) {
+                return 'Los envíos dentro de Santo Domingo tardan 24-48 horas. Para otras provincias, 2-4 días hábiles. ¡El envío es gratis en compras mayores a RD$2,000! 📦';
+            }
+            if (msg.includes('pago') || msg.includes('tarjeta') || msg.includes('efectivo')) {
+                return 'Aceptamos tarjetas de crédito/débito (Visa, MasterCard), transferencias bancarias y pago contra entrega en zonas seleccionadas. 💳';
+            }
+            if (msg.includes('devolución') || msg.includes('devolucion') || msg.includes('reembolso')) {
+                return 'Aceptamos devoluciones dentro de 15 días. El producto debe estar sin usar y en su empaque original. Contáctanos para iniciar el proceso. ↩️';
+            }
+            if (msg.includes('rastrear') || msg.includes('seguimiento') || msg.includes('pedido')) {
+                return 'Puedes rastrear tu pedido en nuestra sección de <a href="seguimiento.html">Seguimiento</a>. Solo necesitas tu número de orden. 🔍';
+            }
+            if (msg.includes('artesano') || msg.includes('producto') || msg.includes('auténtico')) {
+                return 'Todos nuestros productos son 100% auténticos y verificados. Trabajamos directamente con artesanos locales. El 70% del precio va directo a ellos. 🎨';
+            }
+            if (msg.includes('hola') || msg.includes('buenos') || msg.includes('saludos')) {
+                return '¡Hola! 😊 Es un placer saludarte. ¿En qué puedo ayudarte hoy?';
+            }
+            if (msg.includes('gracias') || msg.includes('thanks')) {
+                return '¡De nada! 🌟 Estoy aquí para ayudarte. ¿Hay algo más que pueda hacer por ti?';
+            }
+            
+            return 'Gracias por tu mensaje. Para una atención más personalizada, te recomiendo contactar a nuestro equipo al 809-555-CARE o escribirnos a soporte@caribesupply.do. ¿Puedo ayudarte con algo más? 😊';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

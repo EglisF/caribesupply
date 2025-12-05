@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rastrea tu pedido en tiempo real - CaribeSupply">
+    <title>Seguimiento de Pedidos | CaribeSupply S.A.S.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .tracking-page { padding: var(--space-2xl) 0 var(--space-4xl); }
+        .tracking-search { max-width: 600px; margin: 0 auto var(--space-3xl); }
+        .search-form { display: flex; gap: var(--space-md); }
+        .search-form input { flex: 1; padding: var(--space-lg); font-size: var(--text-lg); border: 2px solid var(--bg-tertiary); border-radius: var(--radius-lg); }
+        .search-form input:focus { outline: none; border-color: var(--color-primary); }
+        .search-form button { padding: var(--space-lg) var(--space-2xl); }
+        @media (max-width: 500px) { .search-form { flex-direction: column; } }
+        .tracking-result { max-width: 700px; margin: 0 auto; }
+        .order-card { background: var(--bg-primary); border-radius: var(--radius-xl); padding: var(--space-2xl); box-shadow: var(--shadow-lg); margin-bottom: var(--space-xl); }
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-xl); flex-wrap: wrap; gap: var(--space-md); }
+        .order-number { font-family: var(--font-display); font-size: var(--text-2xl); }
+        .order-status { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: rgba(45, 138, 94, 0.1); color: var(--color-success); border-radius: var(--radius-full); font-weight: 600; font-size: var(--text-sm); }
+        .order-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-lg); padding: var(--space-lg); background: var(--bg-secondary); border-radius: var(--radius-lg); margin-bottom: var(--space-2xl); }
+        .meta-item label { display: block; font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; margin-bottom: var(--space-xs); }
+        .meta-item span { font-weight: 600; }
+        .timeline { position: relative; padding-left: 40px; }
+        .timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: var(--bg-tertiary); }
+        .timeline-item { position: relative; padding-bottom: var(--space-xl); }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-item::before { content: ''; position: absolute; left: -33px; top: 4px; width: 16px; height: 16px; background: var(--bg-tertiary); border-radius: 50%; border: 3px solid var(--bg-primary); }
+        .timeline-item.completed::before { background: var(--color-success); }
+        .timeline-item.current::before { background: var(--color-primary); box-shadow: 0 0 0 4px rgba(26, 95, 60, 0.2); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 4px rgba(26, 95, 60, 0.2); } 50% { box-shadow: 0 0 0 8px rgba(26, 95, 60, 0.1); } }
+        .timeline-content { background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg); }
+        .timeline-title { display: flex; align-items: center; gap: var(--space-sm); font-weight: 600; margin-bottom: var(--space-xs); }
+        .timeline-title .icon { font-size: var(--text-xl); }
+        .timeline-desc { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-sm); }
+        .timeline-time { font-size: var(--text-xs); color: var(--text-muted); }
+        .empty-state { text-align: center; padding: var(--space-4xl); }
+        .empty-state .icon { font-size: 5rem; margin-bottom: var(--space-lg); opacity: 0.5; }
+        .demo-orders { background: var(--bg-secondary); padding: var(--space-xl); border-radius: var(--radius-lg); margin-top: var(--space-2xl); }
+        .demo-orders h3 { margin-bottom: var(--space-md); font-size: var(--text-lg); }
+        .demo-orders p { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-md); }
+        .demo-codes { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+        .demo-code { padding: var(--space-sm) var(--space-md); background: var(--bg-primary); border-radius: var(--radius-md); font-family: monospace; cursor: pointer; transition: all var(--transition-fast); border: 2px solid transparent; }
+        .demo-code:hover { border-color: var(--color-primary); }
+        .api-info { background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg); margin-top: var(--space-2xl); font-size: var(--text-sm); color: var(--text-secondary); }
+        .api-info code { background: var(--bg-tertiary); padding: 2px 6px; border-radius: var(--radius-sm); font-family: monospace; }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <header class="header">
+        <nav class="nav">
+            <a href="../index.html" class="logo"><span class="logo-icon">🌴</span><span class="logo-text">CaribeSupply</span></a>
+            <button class="nav-toggle" aria-expanded="false"><span class="hamburger"></span></button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                <li><a href="catalogo.html" class="nav-link">Catálogo</a></li>
+                <li><a href="clima.html" class="nav-link">Clima</a></li>
+                <li><a href="tasas.html" class="nav-link">Tasas de Cambio</a></li>
+                <li><a href="seguimiento.html" class="nav-link active">Seguimiento</a></li>
+                <li><a href="soporte.html" class="nav-link">Soporte</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="carrito.html" class="cart-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="m1 1 4 4h16l-2 10H7L5 5"/></svg><span class="cart-count" id="cart-count">0</span></a>
+                <a href="login.html" class="login-btn" id="auth-btn">Iniciar Sesión</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="page-header">
+            <div class="container">
+                <nav class="breadcrumb"><a href="../index.html">Inicio</a><span>/</span><span>Seguimiento</span></nav>
+                <h1 class="page-title">📦 Seguimiento de Pedidos</h1>
+                <p class="page-subtitle">Rastrea el estado de tu pedido en tiempo real</p>
+            </div>
+        </section>
+
+        <section class="tracking-page">
+            <div class="container">
+                <div class="tracking-search">
+                    <form class="search-form" id="tracking-form">
+                        <input type="text" id="tracking-input" placeholder="Ingresa tu número de pedido (ej: CS-123456)" aria-label="Número de seguimiento" required>
+                        <button type="submit" class="btn btn-primary">Rastrear</button>
+                    </form>
+                </div>
+
+                <div class="tracking-result" id="tracking-result">
+                    <div class="empty-state">
+                        <div class="icon">📦</div>
+                        <h2>Ingresa tu número de pedido</h2>
+                        <p style="color: var(--text-secondary);">Te mostraremos el estado actual y el historial de tu envío</p>
+                    </div>
+                </div>
+
+                <div class="demo-orders">
+                    <h3>🧪 Pedidos de Demostración</h3>
+                    <p>Prueba con estos códigos de ejemplo:</p>
+                    <div class="demo-codes">
+                        <span class="demo-code" onclick="trackOrder('CS-001234')">CS-001234</span>
+                        <span class="demo-code" onclick="trackOrder('CS-005678')">CS-005678</span>
+                        <span class="demo-code" onclick="trackOrder('CS-009012')">CS-009012</span>
+                    </div>
+                </div>
+
+                <div class="api-info">
+                    <strong>🔌 API Simulada:</strong> Sistema de logística interno<br>
+                    <code>GET /api/tracking/{orderNumber}</code><br>
+                    En producción, esta API se conectaría con servicios de mensajería como Caribe Express, BM Cargo, etc.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer"><div class="container"><div class="footer-bottom"><p class="copyright">© 2024 CaribeSupply S.A.S.</p></div></div></footer>
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // Pedidos de demostración
+        const demoOrders = {
+            'CS-001234': {
+                number: 'CS-001234',
+                status: 'in-transit',
+                statusName: 'En Tránsito',
+                date: '2024-01-15',
+                estimatedDelivery: '2024-01-18',
+                origin: 'Santo Domingo',
+                destination: 'Santiago',
+                carrier: 'Caribe Express',
+                timeline: [
+                    { status: 'pending', date: '2024-01-15 09:30', completed: true },
+                    { status: 'confirmed', date: '2024-01-15 10:15', completed: true },
+                    { status: 'preparing', date: '2024-01-15 14:00', completed: true },
+                    { status: 'shipped', date: '2024-01-16 08:00', completed: true },
+                    { status: 'in-transit', date: '2024-01-16 15:30', completed: false, current: true },
+                    { status: 'delivered', date: null, completed: false }
+                ]
+            },
+            'CS-005678': {
+                number: 'CS-005678',
+                status: 'delivered',
+                statusName: 'Entregado',
+                date: '2024-01-10',
+                estimatedDelivery: '2024-01-13',
+                deliveredDate: '2024-01-12',
+                origin: 'Santo Domingo',
+                destination: 'La Romana',
+                carrier: 'BM Cargo',
+                timeline: [
+                    { status: 'pending', date: '2024-01-10 11:00', completed: true },
+                    { status: 'confirmed', date: '2024-01-10 11:30', completed: true },
+                    { status: 'preparing', date: '2024-01-10 16:00', completed: true },
+                    { status: 'shipped', date: '2024-01-11 09:00', completed: true },
+                    { status: 'in-transit', date: '2024-01-11 14:00', completed: true },
+                    { status: 'delivered', date: '2024-01-12 10:30', completed: true }
+                ]
+            },
+            'CS-009012': {
+                number: 'CS-009012',
+                status: 'preparing',
+                statusName: 'En Preparación',
+                date: '2024-01-17',
+                estimatedDelivery: '2024-01-20',
+                origin: 'La Vega',
+                destination: 'Puerto Plata',
+                carrier: 'CaribeSupply Express',
+                timeline: [
+                    { status: 'pending', date: '2024-01-17 08:00', completed: true },
+                    { status: 'confirmed', date: '2024-01-17 08:30', completed: true },
+                    { status: 'preparing', date: '2024-01-17 10:00', completed: false, current: true },
+                    { status: 'shipped', date: null, completed: false },
+                    { status: 'in-transit', date: null, completed: false },
+                    { status: 'delivered', date: null, completed: false }
+                ]
+            }
+        };
+
+        document.getElementById('tracking-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const orderNumber = document.getElementById('tracking-input').value.trim().toUpperCase();
+            trackOrder(orderNumber);
+        });
+
+        function trackOrder(orderNumber) {
+            document.getElementById('tracking-input').value = orderNumber;
+            const result = document.getElementById('tracking-result');
+            
+            // Simular carga
+            result.innerHTML = '<div class="loading-state" style="text-align: center; padding: var(--space-3xl);"><div class="loading-spinner"></div><p>Buscando pedido...</p></div>';
+
+            setTimeout(() => {
+                const order = demoOrders[orderNumber];
+                
+                if (!order) {
+                    result.innerHTML = `
+                        <div class="order-card">
+                            <div class="empty-state" style="padding: var(--space-2xl);">
+                                <div class="icon">❌</div>
+                                <h2>Pedido no encontrado</h2>
+                                <p style="color: var(--text-secondary);">El número <strong>${orderNumber}</strong> no existe en nuestro sistema.</p>
+                                <p style="color: var(--text-muted); font-size: var(--text-sm);">Verifica el número e intenta nuevamente.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const statusColors = {
+                    'pending': '#718096',
+                    'confirmed': '#4299e1',
+                    'preparing': '#ed8936',
+                    'shipped': '#9f7aea',
+                    'in-transit': '#38b2ac',
+                    'delivered': '#48bb78'
+                };
+
+                result.innerHTML = `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <h2 class="order-number">Pedido ${order.number}</h2>
+                            </div>
+                            <div class="order-status" style="background: ${statusColors[order.status]}20; color: ${statusColors[order.status]};">
+                                ${ORDER_STATUSES.find(s => s.id === order.status)?.icon || '📦'} ${order.statusName}
+                            </div>
+                        </div>
+
+                        <div class="order-meta">
+                            <div class="meta-item">
+                                <label>Fecha del pedido</label>
+                                <span>${formatDate(order.date)}</span>
+                            </div>
+                            <div class="meta-item">
+                                <label>Entrega estimada</label>
+                                <span>${formatDate(order.estimatedDelivery)}</span>
+                            </div>
+                            <div class="meta-item">
+                                <label>Origen</label>
+                                <span>📍 ${order.origin}</span>
+                            </div>
+                            <div class="meta-item">
+                                <label>Destino</label>
+                                <span>🎯 ${order.destination}</span>
+                            </div>
+                            <div class="meta-item">
+                                <label>Transportista</label>
+                                <span>🚚 ${order.carrier}</span>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: var(--space-lg);">Historial de Seguimiento</h3>
+                        <div class="timeline">
+                            ${order.timeline.map(item => {
+                                const statusInfo = ORDER_STATUSES.find(s => s.id === item.status);
+                                return `
+                                    <div class="timeline-item ${item.completed ? 'completed' : ''} ${item.current ? 'current' : ''}">
+                                        <div class="timeline-content">
+                                            <div class="timeline-title">
+                                                <span class="icon">${statusInfo?.icon || '📋'}</span>
+                                                ${statusInfo?.name || item.status}
+                                            </div>
+                                            <p class="timeline-desc">${statusInfo?.description || ''}</p>
+                                            <span class="timeline-time">${item.date ? formatDateTime(item.date) : 'Pendiente'}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }, 800);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '--';
+            return new Date(dateStr).toLocaleDateString('es-DO', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '--';
+            return new Date(dateStr.replace(' ', 'T')).toLocaleString('es-DO', { 
+                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>
