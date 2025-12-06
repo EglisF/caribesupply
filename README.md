@@ -241,7 +241,7 @@ Este proyecto es de uso educativo. Todos los productos, precios y datos son fict
 
 ## 🔗 Enlaces
 
-- **Producción:** [Link del sitio desplegado]
-- **Repositorio:** [[GitHub Repository](https://github.com/EglisF)]
+- **Producción:   https://github.com/EglisF/caribesupply
+- **Repositorio:  https://github.com/EglisF
 - **Documentación API Open-Meteo:** https://open-meteo.com/
 - **Documentación ExchangeRate-API:** https://www.exchangerate-api.com/
