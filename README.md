@@ -1,10 +1,11 @@
 # 🌴 CaribeSupply S.A.S.
 
-Integrantes del grupo
-Eglis Oscar Feliz Guzman – 100508426
-José Joaquín López Luciano – 100631111
-Jean Carlos Fernandez Marte – 100544210
-Ignacio Hernández Ubaldo - 100293550
+### Integrantes del Grupo
+
+* Eglis Oscar Feliz Guzman - 100508426
+* José Joaquín López Luciano - 100631111
+* Jean Carlos Fernandez Marte - 100544210
+* Ignacio Hernández Ubaldo - 100293550
 
 ## Descripción Ejecutiva
 
