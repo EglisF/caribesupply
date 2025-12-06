@@ -1,5 +1,11 @@
 # 🌴 CaribeSupply S.A.S.
 
+Integrantes del grupo
+Eglis Oscar Feliz Guzman – 100508426
+José Joaquín López Luciano – 100631111
+Jean Carlos Fernandez Marte – 100544210
+Ignacio Hernández Ubaldo - 100293550
+
 ## Descripción Ejecutiva
 
 **CaribeSupply S.A.S.** es una plataforma de comercio electrónico dominicana que conecta artesanos, productores locales y microempresas con clientes nacionales e internacionales. El sitio web permite explorar productos artesanales auténticos, realizar compras simuladas y acceder a servicios complementarios como consulta de clima, tasas de cambio y seguimiento de pedidos.
