@@ -6,6 +6,7 @@
 * José Joaquín López Luciano - 100631111
 * Jean Carlos Fernandez Marte - 100544210
 * Ignacio Hernández Ubaldo - 100293550
+* Manuel Miguel Cedeño Bacó - 100315443
 
 ## Descripción Ejecutiva
 
